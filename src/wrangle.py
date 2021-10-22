@@ -9,7 +9,7 @@ if __name__ == '__main__':
     data_file = "../data/takeout_comment.csv"
     splited_file = "../data/splited.csv"
     wordcnt_file = "../data/wordcnt.csv"
-    punctuations = set([",", "，", "!", "！", "。", "?", "？"])
+    punctuations = set([",", "，", "!", "！", "。", "?", "？", "~", "：", ":", ";", "；"])
     comments = ReadCSV(data_file)
     splited_list = []
     for comment in comments:
@@ -21,13 +21,8 @@ if __name__ == '__main__':
     WriteCSV(splited_file, splited_list)
 
     # Words count
-    positive_wordcnt = Counter()
-    negative_wordcnt = Counter()
+    wordcnt = Counter()
     for splited_line, emotion in splited_list:
-        for word in splited_line:
-            if emotion == "1":
-                positive_wordcnt[word] += 1
-            else:
-                negative_wordcnt[word] += 1
-    wordcnt = positive_wordcnt.most_common() + negative_wordcnt.most_common()
-    WriteCSV(wordcnt_file, wordcnt)
+        for word in splited_line: 
+            wordcnt[word] += 1
+    WriteCSV(wordcnt_file, wordcnt.most_common())

@@ -13,7 +13,7 @@ if __name__ == '__main__':
     comments = ReadCSV(data_file)
     splited_list = []
     for comment in comments:
-        seg_list = jieba.cut(comment[1], cut_all = False)
+        seg_list = jieba.cut(comment[1], cut_all = True)
         splited_list.append([
             [seg for seg in seg_list if seg not in punctuations],
             comment[0]

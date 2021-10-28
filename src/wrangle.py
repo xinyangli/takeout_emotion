@@ -9,11 +9,11 @@ if __name__ == '__main__':
     data_file = "../data/takeout_comment.csv"
     splited_file = "../data/splited.csv"
     wordcnt_file = "../data/wordcnt.csv"
-    punctuations = set([",", "，", "!", "！", "。", "?", "？", "~", "：", ":", ";", "；"])
+    punctuations = {",", "，", "!", "！", "。", "?", "？", "~", "：", ":", ";", "；"}
     comments = ReadCSV(data_file)
     splited_list = []
     for comment in comments:
-        seg_list = jieba.cut(comment[1], cut_all = True)
+        seg_list = jieba.cut(comment[1], cut_all = False)
         splited_list.append([
             [seg for seg in seg_list if seg not in punctuations],
             comment[0]

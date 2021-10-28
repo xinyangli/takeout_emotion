@@ -1,24 +1,29 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from utils import *
 import jieba
 import math
 
+
 def get_PMI(nw1, nw2, nw12, n):
     p1 = nw1 / n
     p2 = nw2 / n
+    if nw12 == 0:
+        nw12 += 1  # Flatten data
+        n += 1
     p12 = nw12 / n
-    if p12 == 0:
-        return 0.0
     return math.log2(p12 / (p1 * p2))
+
 
 if __name__ == '__main__':
     source_file = '../data/takeout_comment.csv'
     result_file = '../data/result_sopmi.csv'
-    #tmp_file = '../data/tmp.csv'
-    punctuations = set([',', '，', '!', '！', '。', '?', '？', '~', '：', ':', ';', '；'])
+    # tmp_file = '../data/tmp.csv'
+    punctuations = {',', '，', '!', '！', '。', '?', '？', '：', ':', ';', '；', '…', '/'}
     print('File reading...')
     comments = ReadCSV(source_file)
-    pseed = ['好吃', '快']
-    nseed = ['难吃', '慢']
+    pseed = {'好吃', '快'}
+    nseed = {'难吃', '慢'}
     print('Counting words...')
     count = {}
     seed_cnt = {}
@@ -26,22 +31,23 @@ if __name__ == '__main__':
         seed_cnt[w] = 0
     for w in nseed:
         seed_cnt[w] = 0
-    occur = []
-    done = []
+    occur = set()
+    done = set()
     for comment in comments:
         occur.clear()
-        done.clear()    
-        words = jieba.lcut(comment[1], cut_all = True)
+        done.clear()
+        words = jieba.lcut(comment[1])
         for word in words:
-            if word in done: continue
+            if word in done:
+                continue
             if (word in pseed) or (word in nseed):
-                occur.append(word)
+                occur.add(word)
                 seed_cnt[word] += 1
-                done.append(word)
+                done.add(word)
         for word in words:
             if not ((word in punctuations) or (word in done)):
-                done.append(word)
-                if not word in count:
+                done.add(word)
+                if word not in count:
                     temp = {'all': 0}
                     for w in pseed:
                         temp[w] = 0
@@ -51,7 +57,7 @@ if __name__ == '__main__':
                 for w in occur:
                     count[word][w] += 1
                 count[word]['all'] += 1
-    #WriteCSV(tmp_file, count)
+    # WriteCSV(tmp_file, count)
     print('Calculating answers...')
     n = len(comments)
     result = []
@@ -62,7 +68,8 @@ if __name__ == '__main__':
             res += get_PMI(nw1, seed_cnt[w], count[key][w], n)
         for w in nseed:
             res -= get_PMI(nw1, seed_cnt[w], count[key][w], n)
-        result.append((res, key))
+        if nw1 > 10:
+            result.append((res, key, nw1, [(seed_cnt[w], count[key][w]) for w in nseed], [(seed_cnt[w], count[key][w]) for w in pseed]))
     print('Sorting...')
     result.sort()
     print('Writing results...')

@@ -1,4 +1,3 @@
-
 import jieba
 import re
 from utils import *
@@ -9,20 +8,12 @@ if __name__ == '__main__':
     data_file = "../data/takeout_comment.csv"
     splited_file = "../data/splited.csv"
     wordcnt_file = "../data/wordcnt.csv"
-    punctuations = {",", "，", "!", "！", "。", "?", "？", "~", "：", ":", ";", "；"}
-    comments = ReadCSV(data_file)
-    splited_list = []
-    for comment in comments:
-        seg_list = jieba.cut(comment[1], cut_all = False)
-        splited_list.append([
-            [seg for seg in seg_list if seg not in punctuations],
-            comment[0]
-        ])
-    WriteCSV(splited_file, splited_list)
+    comments = read_csv(data_file)
+    cut_comments = cut_sentences([c[1] for c in comments], output_file=splited_file)
 
     # Words count
     wordcnt = Counter()
-    for splited_line, emotion in splited_list:
+    for splited_line in cut_comments:
         for word in splited_line: 
             wordcnt[word] += 1
-    WriteCSV(wordcnt_file, wordcnt.most_common())
+    write_csv(wordcnt_file, wordcnt.most_common())

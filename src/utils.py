@@ -24,15 +24,19 @@ def write_csv(file, dataset):
         csvfile.close()
 
 
-def cut_sentences(sentences, output_file=None):
+def cut_sentences(sentences, output_file=None, only_adj = False):
     punctuations = {',', '，', '!', '！', '。', '?', '？', '：', ':', ';', '；', '…', '/'}
     splited_list = []
+    if only_adj is True:
+        jieba.enable_paddle()
+        import jieba.posseg as pseg
     for sentence in sentences:
-        seg_list = jieba.cut(sentence, cut_all=False)
-        # if output_file:
-        #     splited_list.append(tuple([seg for seg in seg_list if seg not in punctuations]))
-        # else:
-        splited_list.append([seg for seg in seg_list if seg not in punctuations])
+        if only_adj is True:
+            seg = pseg.cut(sentence, use_paddle=True)
+            splited_list.append([word for (word, flag) in seg if flag == "a"])
+        else:
+            words = jieba.cut(sentence, cut_all=False)
+            splited_list.append([word for word in words if word not in punctuations])
     if output_file is not None:
         write_csv(output_file, splited_list)
         return splited_list

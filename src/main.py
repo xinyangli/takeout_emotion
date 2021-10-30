@@ -15,7 +15,7 @@ if __name__ == "__main__":
     word_occur = read_csv("../data/wordcnt.csv")
     word_occur = [c[0] for c in word_occur]
 
-    # write_csv(result_file, hownet_result(pseed, nseed, word_occur))
+    write_csv(result_file, hownet_result(pseed, nseed, word_occur))
     pseed_sopmi = {"好吃", "快"}
     nseed_sopmi = {"难吃", "慢"}
     splited_comments = read_csv("../data/splited.csv")

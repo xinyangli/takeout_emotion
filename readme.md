@@ -1,36 +1,6 @@
-# 实验：对外卖评论中词语的情感分析
-
-实验环境 Ubuntu - 20.04
-
-使用的两个包：[jieba 分词](https://github.com/fxsjy/jieba) [OpenHowNet](https://github.com/thunlp/OpenHowNet)
-
-~~快住手，你这不是在写 readme，是在写实验报告~~
-
-## 一、项目文件及其功能介绍
-
-1. **data** 文件夹
-
-   | 文件名              | 功能或内容   |
-   | :-----------------: | :----------: |
-   | takeout_comment.csv | 所有外卖评论 |
-   | splited.csv |初步分词处理后得到的词语|
-   | wordcnt.csv |词频统计（词语去重）的结果|
-   | positive_seed.csv |消极种子词|
-   | negative_seed.csv |积极种子词|
-   | result.csv |按词语的语义倾向值的排序结果，也就是实验结果|
-   
-2. **src** 文件夹
-
-	|   文件名   |      功能或内容      |
-	| :--------: | :------------------: |
-	|  utils.py  | 便捷的 csv 读写接口  |
-	| wrangle.py |    分词及词频统计    |
-	|  main.py   | 计算语义倾向值并排序 |
-
-## 二、实验准备
+## 傻瓜式使用教学
 
 ```bash
-# 在 takeout_emotion 目录下执行下面的指令
 # 建立虚拟环境并激活
 python3 -m venv env
 source env/bin/activate
@@ -43,19 +13,44 @@ python
 >>> exit()
 ```
 
-## 三、实验步骤
+然后先执行 wrangle.py，后执行 main.py 捏。
 
-1. 写代码（废话）
-2. 把设计的种子词写进那两个 csv 文件中
-3. 运行 wrangle.py 分词
-4. 运行 main.py 计算并查看结果
-5. ~~修改 main.py 里的参数和种子词，继续玩~~
+## 数据文件描述
 
-## 四、重要接口
+预设文件：
 
-|                            函数名                            |                             功能                             |
-| :----------------------------------------------------------: | :----------------------------------------------------------: |
-| calculate_polarity(word, positive_seed, negative_seed, hownet_dict) | 两个 seed 是种子词列表，需要一个已经初始化的字典 hownet_dict，会根据这两个列表和公式计算 word 的倾向值 |
-|                        ReadCSV(file)                         | file 是字符串，表示目标文件的路径，会读取这个文件的内容，并返回一个列表 |
-|                   WriteCSV(file, dataset)                    |          将这个列表 dataset 写入路径为 file 的文件           |
+1. negative_seed.csv, positive_seed.csv 存放基于 HowNet 的情感倾向性分析所使用的种子词
 
+2. takeout_comment.csv 存放原始的评论集
+
+生成文件：（部分是调试、研究过程中生成的，这里不作介绍）
+
+1. splited.csv 分词后的结果
+
+2. wordcnt.csv 所有出现过的词以及它的词频
+
+3. result.csv, result_sopmi.csv 利用两种不同算法分析排序后的结果
+
+## 接口描述
+
+1. utils.py
+
+  read_csv(file)：传入字符串（文件目录），返回一个列表，即读取到的，每行的内容。
+
+  write_csv(file, dataset): 传入字符串（文件目录）和待写入的数据，写进去的每个元素占一行。
+
+  cut_sentences(sentences, output_file=None, only_adj = False)：传入待分词的句子，输出的文件，以及是否只保留形容词，返回一个列表，存放分出来的词
+
+2. sopmi.py
+
+  get_PMI(nw1, nw2, nw12, n): 计算两个词的 PMI 值，传入的是第一个词出现的次数、第二个词出现的次数、两个词共现的次数、语句的总数。返回 PMI 值。
+
+  sopmi_result(positive_seeds, negative_seeds, comments): 传入积极种子词集和消极种子词集，以及分过词的评论集，返回的是计算并排序后的词语列表。
+
+3. hownet.py
+
+  init_dict(advanced = False): 返回初始化后的 HowNet 词典。advanced 参数表示这个词典是否要用于相似度计算。
+
+  calculate_polarity(word, positive_seeds, negative_seeds, hownet_dict): 传入待计算词、正向种子词集、负向种子词集、和初始化过的词典对象，返回计算出的语义倾向值。
+
+  hownet_result(positive_seeds, negative_seeds, words, hownet_dict=None): 传入正向种子词集、负向种子词集、待计算词语集、词典（没有会字典创建），返回计算并排序后的答案列表。

@@ -59,3 +59,7 @@ python
 |                        ReadCSV(file)                         | file 是字符串，表示目标文件的路径，会读取这个文件的内容，并返回一个列表 |
 |                   WriteCSV(file, dataset)                    |          将这个列表 dataset 写入路径为 file 的文件           |
 
+## Credits
+[@Qing-LKY](https://github.com/Qing-LKY) - Developer
+
+[@XinyangLi](https://github.com/xinyangli) - Developer

@@ -58,3 +58,8 @@ python
   calculate_polarity(word, positive_seeds, negative_seeds, hownet_dict): 传入待计算词、正向种子词集、负向种子词集、和初始化过的词典对象，返回计算出的语义倾向值。
 
   hownet_result(positive_seeds, negative_seeds, words, hownet_dict=None): 传入正向种子词集、负向种子词集、待计算词语集、词典（没有会字典创建），返回计算并排序后的答案列表。
+
+## Credits
+[@Qing-LKY](https://github.com/Qing-LKY) - Developer
+
+[@XinyangLi](https://github.com/xinyangli) - Developer
